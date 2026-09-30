@@ -1,0 +1,309 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B10000000000000000000001 /* PlacodeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000001 /* PlacodeApp.swift */; };
+		B10000000000000000000002 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000002 /* AppModel.swift */; };
+		B10000000000000000000003 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000003 /* LocationService.swift */; };
+		B10000000000000000000004 /* HeroFitting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000004 /* HeroFitting.swift */; };
+		B10000000000000000000005 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000005 /* Controls.swift */; };
+		B10000000000000000000006 /* LocateChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000006 /* LocateChrome.swift */; };
+		B10000000000000000000007 /* EdgeScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000007 /* EdgeScreens.swift */; };
+		B10000000000000000000008 /* SharePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* SharePresenter.swift */; };
+		B10000000000000000000009 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000009 /* RootView.swift */; };
+		B1000000000000000000000A /* PlaceExperience.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000A /* PlaceExperience.swift */; };
+		B1000000000000000000000B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000B /* Assets.xcassets */; };
+		B1000000000000000000000C /* PlacodeCore in Frameworks */ = {isa = PBXBuildFile; productRef = D10000000000000000000002 /* PlacodeCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F10000000000000000000001 /* PlacodeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacodeApp.swift; sourceTree = "<group>"; };
+		F10000000000000000000002 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		F10000000000000000000003 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		F10000000000000000000004 /* HeroFitting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroFitting.swift; sourceTree = "<group>"; };
+		F10000000000000000000005 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
+		F10000000000000000000006 /* LocateChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocateChrome.swift; sourceTree = "<group>"; };
+		F10000000000000000000007 /* EdgeScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeScreens.swift; sourceTree = "<group>"; };
+		F10000000000000000000008 /* SharePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePresenter.swift; sourceTree = "<group>"; };
+		F10000000000000000000009 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		F1000000000000000000000A /* PlaceExperience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceExperience.swift; sourceTree = "<group>"; };
+		F1000000000000000000000B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F1000000000000000000000C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F1000000000000000000000D /* Placode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Placode.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10000000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1000000000000000000000C /* PlacodeCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A10000000000000000000004 /* Placode */ = {
+			isa = PBXGroup;
+			children = (
+				F10000000000000000000001 /* PlacodeApp.swift */,
+				F10000000000000000000002 /* AppModel.swift */,
+				F10000000000000000000003 /* LocationService.swift */,
+				F10000000000000000000004 /* HeroFitting.swift */,
+				F10000000000000000000005 /* Controls.swift */,
+				F10000000000000000000006 /* LocateChrome.swift */,
+				F10000000000000000000007 /* EdgeScreens.swift */,
+				F10000000000000000000008 /* SharePresenter.swift */,
+				F10000000000000000000009 /* RootView.swift */,
+				F1000000000000000000000A /* PlaceExperience.swift */,
+				F1000000000000000000000B /* Assets.xcassets */,
+				F1000000000000000000000C /* Info.plist */,
+			);
+			path = Placode;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000005 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F1000000000000000000000D /* Placode.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000006 = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000004 /* Placode */,
+				A10000000000000000000005 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10000000000000000000002 /* Placode */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C10000000000000000000002 /* Build configuration list for PBXNativeTarget "Placode" */;
+			buildPhases = (
+				A10000000000000000000007 /* Sources */,
+				A10000000000000000000003 /* Frameworks */,
+				A10000000000000000000008 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Placode;
+			packageProductDependencies = (
+				D10000000000000000000002 /* PlacodeCore */,
+			);
+			productName = Placode;
+			productReference = F1000000000000000000000D /* Placode.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					A10000000000000000000002 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = C10000000000000000000001 /* Build configuration list for PBXProject "Placode" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A10000000000000000000006;
+			packageReferences = (
+				D10000000000000000000001 /* XCLocalSwiftPackageReference "." */,
+			);
+			productRefGroup = A10000000000000000000005 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A10000000000000000000002 /* Placode */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A10000000000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1000000000000000000000B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000007 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10000000000000000000001 /* PlacodeApp.swift in Sources */,
+				B10000000000000000000002 /* AppModel.swift in Sources */,
+				B10000000000000000000003 /* LocationService.swift in Sources */,
+				B10000000000000000000004 /* HeroFitting.swift in Sources */,
+				B10000000000000000000005 /* Controls.swift in Sources */,
+				B10000000000000000000006 /* LocateChrome.swift in Sources */,
+				B10000000000000000000007 /* EdgeScreens.swift in Sources */,
+				B10000000000000000000008 /* SharePresenter.swift in Sources */,
+				B10000000000000000000009 /* RootView.swift in Sources */,
+				B1000000000000000000000A /* PlaceExperience.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		C10000000000000000000011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C10000000000000000000012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C10000000000000000000021 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Placode/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tade.Placode;
+				PRODUCT_NAME = Placode;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C10000000000000000000022 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Placode/Info.plist;
+				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.tade.Placode;
+				PRODUCT_NAME = Placode;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C10000000000000000000001 /* Build configuration list for PBXProject "Placode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C10000000000000000000011 /* Debug */,
+				C10000000000000000000012 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C10000000000000000000002 /* Build configuration list for PBXNativeTarget "Placode" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C10000000000000000000021 /* Debug */,
+				C10000000000000000000022 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		D10000000000000000000001 /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D10000000000000000000002 /* PlacodeCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D10000000000000000000001 /* XCLocalSwiftPackageReference "." */;
+			productName = PlacodeCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A10000000000000000000001 /* Project object */;
+}
