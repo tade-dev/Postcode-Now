@@ -95,75 +95,84 @@ private struct SettleCanvas: View, Animatable {
         let _ = tick.consider(elapsed: elapsed, enabled: !reduceMotion)
         ZStack {
             theme.primary.color.ignoresSafeArea()
-            ZStack {
+            VStack(spacing: 0) {
+                header(sample: sample, theme: theme)
+                Spacer(minLength: 0)
                 hero(sample: sample, theme: theme)
-                    .padding(.bottom, 72)
                     .accessibilitySortPriority(3)
-                if sample.locateOpacity > 0.02 {
-                    LocateChrome(onPrimary: chrome.onPrimary.color, showsBackground: false)
-                        .opacity(sample.locateOpacity)
-                        .allowsHitTesting(false)
-                        .accessibilityHidden(true)
-                }
-                VStack {
-                    banner(sample: sample, theme: theme)
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
-                        .opacity(sample.bannerOpacity)
-                    Spacer()
-                }
-                .accessibilitySortPriority(2)
-                if !session.isOutdated && session.quality == .precise {
-                    VStack {
-                        HStack {
-                            Text(ProductCopy.wordmark)
-                                .font(.system(.body, design: .rounded).weight(.semibold))
-                                .foregroundStyle(theme.onPrimary.color.opacity(HeroType.mutedOpacity))
-                                .opacity(sample.wordmarkOpacity)
-                                .accessibilityHidden(true)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.top, 8)
-                        Spacer()
-                    }
-                }
-                VStack(spacing: 4) {
-                    if session.isOutdated || session.quality == .approximate {
-                        PrimaryButton(
-                            title: session.isOutdated ? ProductCopy.retry : ProductCopy.tryAgain,
-                            fill: theme.accent.color,
-                            label: theme.onAccent.color,
-                            action: onRetry
-                        )
-                        SecondaryFillButton(
-                            title: ProductCopy.shareAnyway,
-                            foreground: theme.onPrimary.color,
-                            action: onShare
-                        )
-                    } else {
-                        PrimaryButton(
-                            title: ProductCopy.share,
-                            fill: theme.accent.color,
-                            label: theme.onAccent.color,
-                            action: onShare
-                        )
-                        SecondaryTextButton(
-                            title: ProductCopy.copy,
-                            color: theme.onPrimary.color,
-                            action: onCopy
-                        )
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 8)
-                .opacity(sample.ctaOpacity)
-                .offset(y: CGFloat(sample.ctaOffset))
-                .accessibilitySortPriority(1)
+                Spacer(minLength: 0)
             }
             .frame(maxWidth: 420)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if sample.locateOpacity > 0.02 {
+                LocateChrome(onPrimary: chrome.onPrimary.color, showsBackground: false)
+                    .opacity(sample.locateOpacity)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
         }
+        .safeAreaInset(edge: .bottom, spacing: 16) {
+            controls(sample: sample, theme: theme)
+        }
+    }
+
+    @ViewBuilder
+    private func header(sample: SettleSample, theme: PlaceTheme) -> some View {
+        if session.isOutdated || session.quality == .approximate {
+            banner(sample: sample, theme: theme)
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                .opacity(sample.bannerOpacity)
+                .accessibilitySortPriority(2)
+        } else {
+            HStack {
+                Text(ProductCopy.wordmark)
+                    .font(.system(.body, design: .rounded).weight(.semibold))
+                    .foregroundStyle(theme.onPrimary.color.opacity(HeroType.mutedOpacity))
+                    .opacity(sample.wordmarkOpacity)
+                    .accessibilityHidden(true)
+                Spacer()
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 8)
+        }
+    }
+
+    private func controls(sample: SettleSample, theme: PlaceTheme) -> some View {
+        VStack(spacing: 8) {
+            if session.isOutdated || session.quality == .approximate {
+                PrimaryButton(
+                    title: session.isOutdated ? ProductCopy.retry : ProductCopy.tryAgain,
+                    fill: theme.accent.color,
+                    label: theme.onAccent.color,
+                    action: onRetry
+                )
+                SecondaryFillButton(
+                    title: ProductCopy.shareAnyway,
+                    foreground: theme.onPrimary.color,
+                    action: onShare
+                )
+            } else {
+                PrimaryButton(
+                    title: ProductCopy.share,
+                    fill: theme.accent.color,
+                    label: theme.onAccent.color,
+                    action: onShare
+                )
+                SecondaryTextButton(
+                    title: ProductCopy.copy,
+                    color: theme.onPrimary.color,
+                    action: onCopy
+                )
+            }
+        }
+        .padding(.horizontal, 24)
+        .padding(.bottom, 8)
+        .frame(maxWidth: 420)
+        .frame(maxWidth: .infinity)
+        .opacity(sample.ctaOpacity)
+        .offset(y: CGFloat(sample.ctaOffset))
+        .accessibilitySortPriority(1)
     }
 
     private func hero(sample: SettleSample, theme: PlaceTheme) -> some View {
