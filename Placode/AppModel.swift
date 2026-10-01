@@ -38,7 +38,7 @@ final class AppModel {
     private var generation = 0
     private var task: Task<Void, Never>?
 
-    init(location: LocationService = LocationService(), client: PostcodesClient = .live()) {
+    init(location: LocationService, client: PostcodesClient) {
         self.location = location
         self.client = client
     }

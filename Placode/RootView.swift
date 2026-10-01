@@ -1,11 +1,12 @@
 import PlacodeCore
 import SwiftUI
 
+@MainActor
 struct RootView: View {
     @Environment(\.colorScheme) private var systemScheme
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var model = AppModel()
+    @State private var model = AppModel(location: LocationService(), client: .live())
 
     var body: some View {
         @Bindable var model = model
