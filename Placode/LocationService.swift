@@ -25,7 +25,7 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
     }
 
     var isReducedAccuracy: Bool {
-        manager.accuracyAuthorization == .reduced
+        manager.accuracyAuthorization == .reducedAccuracy
     }
 
     var access: LocationAccess {
