@@ -17,21 +17,64 @@ public struct RGB: Equatable, Hashable, Sendable {
         b = UInt8(hex & 0xFF)
     }
 
-    /// Hue in degrees (wraps), saturation and lightness in 0...1 (clamped).
-    public init(hue: Double, saturation: Double, lightness: Double) {
-        let h = ((hue.truncatingRemainder(dividingBy: 360)) + 360)
-            .truncatingRemainder(dividingBy: 360) / 360
-        let s = min(1, max(0, saturation))
-        let l = min(1, max(0, lightness))
+    /// OKLCH to sRGB. `okL` is OKLab lightness in 0...1, `chroma` is OKLab
+    /// chroma (roughly 0...0.37 inside sRGB) and `hue` is degrees.
+    ///
+    /// Out-of-gamut inputs clamp per channel, which distorts the hue. Go
+    /// through `inGamut(okL:chroma:hue:)` unless the colour is known to fit.
+    init(okL: Double, chroma: Double, hue: Double) {
+        let linear = RGB.linearComponents(okL: okL, chroma: chroma, hue: hue)
 
-        func component(_ offset: Double) -> UInt8 {
-            let k = (offset + h * 12).truncatingRemainder(dividingBy: 12)
-            let a = s * min(l, 1 - l)
-            let value = l - a * max(-1, min(min(k - 3, 9 - k), 1))
-            return UInt8((value * 255).rounded())
+        func encode(_ value: Double) -> UInt8 {
+            let v = min(1, max(0, value))
+            let gamma = v <= 0.0031308 ? 12.92 * v : 1.055 * pow(v, 1 / 2.4) - 0.055
+            return UInt8((gamma * 255).rounded())
         }
 
-        self.init(r: component(0), g: component(8), b: component(4))
+        self.init(r: encode(linear.r), g: encode(linear.g), b: encode(linear.b))
+    }
+
+    /// Linear-light sRGB for an OKLCH colour, before gamma encoding.
+    /// Components outside 0...1 mean the colour falls outside the sRGB gamut,
+    /// which is why the in-gamut test has to run here and not on the bytes.
+    static func linearComponents(
+        okL: Double,
+        chroma: Double,
+        hue: Double
+    ) -> (r: Double, g: Double, b: Double) {
+        let radians = hue * .pi / 180
+        let a = chroma * cos(radians)
+        let b = chroma * sin(radians)
+
+        let lNonLinear = okL + 0.3963377774 * a + 0.2158037573 * b
+        let mNonLinear = okL - 0.1055613458 * a - 0.0638541728 * b
+        let sNonLinear = okL - 0.0894841775 * a - 1.2914855480 * b
+
+        let l = lNonLinear * lNonLinear * lNonLinear
+        let m = mNonLinear * mNonLinear * mNonLinear
+        let s = sNonLinear * sNonLinear * sNonLinear
+
+        return (
+            r: 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+            g: -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+            b: -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s
+        )
+    }
+
+    /// Steps chroma down until the colour fits inside sRGB. Clamping channels
+    /// instead would distort the hue and undo the perceptual evenness.
+    static func inGamut(okL: Double, chroma: Double, hue: Double) -> RGB {
+        var c = chroma
+        for _ in 0..<24 {
+            let linear = linearComponents(okL: okL, chroma: c, hue: hue)
+            let fits = [linear.r, linear.g, linear.b]
+                .allSatisfy { $0 >= -0.0001 && $0 <= 1.0001 }
+            if fits {
+                return RGB(okL: okL, chroma: c, hue: hue)
+            }
+            c *= 0.94
+        }
+        return RGB(okL: okL, chroma: 0, hue: hue)
     }
 
     var hex: UInt32 {

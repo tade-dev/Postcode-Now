@@ -3,38 +3,35 @@ import Foundation
 /// A permanent, contrast-safe colour for any UK outcode.
 ///
 /// The hue comes from a stable hash so a postcode always looks the same, and
-/// neighbouring outcodes look different. Lightness is forced into one of two
-/// bands so the 4.5:1 contrast floors hold by construction rather than by luck.
+/// neighbouring outcodes look different. Lightness and chroma are forced into
+/// one of two OKLCH bands, so the 4.5:1 contrast floors hold by construction
+/// rather than by luck, and every place colour is the same brightness to the
+/// eye regardless of hue.
 public enum ProceduralPalette {
-    /// Hues in 52..<78 read as muddy olive at these lightness bands, so the
-    /// wheel skips that arc and compresses the rest into what is left.
-    private static let muddyStart: Double = 52
-    private static let muddyEnd: Double = 78
+    /// Dark yellows have nowhere to go: sRGB has no saturated dark yellow, so
+    /// gamut mapping strips the chroma out of the deep band from 65 to 130 and
+    /// leaves olive drab. The wheel skips that arc and compresses the rest
+    /// into what is left. The bounds are where the swatches stop reading as
+    /// brown and start reading as green again.
+    private static let muddyStart: Double = 65
+    private static let muddyEnd: Double = 130
 
-    private static let deepLightness: Double = 0.22
-    private static let paleLightness: Double = 0.88
-    private static let deepSaturation: Double = 0.52
-    private static let paleSaturation: Double = 0.34
+    private static let deepLightness: Double = 0.35
+    private static let deepChroma: Double = 0.11
+    private static let paleLightness: Double = 0.92
+    private static let paleChroma: Double = 0.045
+
+    private static let deepAccentLightness: Double = 0.72
+    private static let deepAccentChroma: Double = 0.15
+    private static let paleAccentLightness: Double = 0.45
+    private static let paleAccentChroma: Double = 0.14
+
+    /// A fixed rotation would make the accent hue a function of the primary
+    /// hue alone, which parked a magenta accent on every green place colour.
+    private static let accentRotations: [Double] = [150, 185, 220]
 
     public static func theme(forOutcode outcode: String) -> PlaceTheme {
-        let key = normalize(outcode)
-        let digest = hash(key)
-        let baseHue = hue(forOutcode: outcode)
-        let isPale = digest % 6 == 0
-
-        let primary = isPale
-            ? RGB(hue: baseHue, saturation: paleSaturation, lightness: paleLightness)
-            : RGB(hue: baseHue, saturation: deepSaturation, lightness: deepLightness)
-
-        let accent = accentColor(baseHue: baseHue, isPale: isPale, on: primary)
-
-        return PlaceTheme(
-            id: key,
-            primary: primary,
-            onPrimary: RGB.bestText(on: primary),
-            accent: accent,
-            onAccent: RGB.bestText(on: accent)
-        )
+        resolve(outcode).theme
     }
 
     /// Exposed for test: the hue this outcode resolves to, in degrees.
@@ -45,25 +42,64 @@ public enum ProceduralPalette {
         return raw < muddyStart ? raw : raw + (muddyEnd - muddyStart)
     }
 
-    /// Steps around the wheel until the accent clears 3:1 against the place
-    /// colour and can carry readable text. The first candidate almost always
-    /// wins; the loop is the guarantee, not the common path.
-    private static func accentColor(baseHue: Double, isPale: Bool, on primary: RGB) -> RGB {
-        let lightness = isPale ? 0.32 : 0.68
-        let saturation = isPale ? 0.62 : 0.74
+    /// Exposed for test: the accent rotation this outcode ends up on, in
+    /// degrees from the primary hue, after any stepping by the search loop.
+    public static func accentRotation(forOutcode outcode: String) -> Int {
+        Int(resolve(outcode).rotation)
+    }
+
+    private static func resolve(_ outcode: String) -> (theme: PlaceTheme, rotation: Double) {
+        let key = normalize(outcode)
+        let digest = hash(key)
+        let baseHue = hue(forOutcode: outcode)
+        let isPale = digest % 6 == 0
+
+        let primary = isPale
+            ? RGB.inGamut(okL: paleLightness, chroma: paleChroma, hue: baseHue)
+            : RGB.inGamut(okL: deepLightness, chroma: deepChroma, hue: baseHue)
+
+        let accent = accentColour(baseHue: baseHue, digest: digest, isPale: isPale, on: primary)
+
+        let theme = PlaceTheme(
+            id: key,
+            primary: primary,
+            onPrimary: RGB.bestText(on: primary),
+            accent: accent.colour,
+            onAccent: RGB.bestText(on: accent.colour)
+        )
+        return (theme, accent.rotation)
+    }
+
+    /// Starts from the rotation this outcode's hash picked, then steps around
+    /// the wheel until the accent clears 3:1 against the place colour and can
+    /// carry readable text. The first candidate almost always wins; the loop
+    /// is the guarantee, not the common path.
+    private static func accentColour(
+        baseHue: Double,
+        digest: UInt64,
+        isPale: Bool,
+        on primary: RGB
+    ) -> (rotation: Double, colour: RGB) {
+        let lightness = isPale ? paleAccentLightness : deepAccentLightness
+        let chroma = isPale ? paleAccentChroma : deepAccentChroma
+        // A different slice of the digest than the pale selector, so which
+        // rotation an outcode gets is independent of which band it is in.
+        let start = accentRotations[Int((digest >> 8) % UInt64(accentRotations.count))]
+
         for step in 0..<12 {
-            let candidate = RGB(
-                hue: baseHue + 150 + Double(step) * 12,
-                saturation: saturation,
-                lightness: lightness
+            let rotation = start + Double(step) * 12
+            let candidate = RGB.inGamut(
+                okL: lightness,
+                chroma: chroma,
+                hue: baseHue + rotation
             )
             let readable = RGB.bestText(on: candidate)
             if candidate.contrast(against: primary) >= 3.0,
                readable.contrast(against: candidate) >= ThemeInterpolation.controlContrastFloor {
-                return candidate
+                return (rotation, candidate)
             }
         }
-        return RGB.bestText(on: primary)
+        return (0, RGB.bestText(on: primary))
     }
 
     private static func normalize(_ outcode: String) -> String {

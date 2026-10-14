@@ -2,23 +2,6 @@ import Foundation
 import XCTest
 @testable import PostcodeNowCore
 
-final class HSLTests: XCTestCase {
-    func testKnownConversions() {
-        XCTAssertEqual(RGB(hue: 0, saturation: 1, lightness: 0.5), RGB(hex: 0xFF0000))
-        XCTAssertEqual(RGB(hue: 120, saturation: 1, lightness: 0.5), RGB(hex: 0x00FF00))
-        XCTAssertEqual(RGB(hue: 240, saturation: 1, lightness: 0.5), RGB(hex: 0x0000FF))
-        XCTAssertEqual(RGB(hue: 0, saturation: 0, lightness: 1), RGB(hex: 0xFFFFFF))
-        XCTAssertEqual(RGB(hue: 0, saturation: 0, lightness: 0), RGB(hex: 0x000000))
-        XCTAssertEqual(RGB(hue: 0, saturation: 0, lightness: 0.5), RGB(hex: 0x808080))
-    }
-
-    func testHueWrapsAndClamps() {
-        XCTAssertEqual(RGB(hue: 360, saturation: 1, lightness: 0.5), RGB(hex: 0xFF0000))
-        XCTAssertEqual(RGB(hue: -120, saturation: 1, lightness: 0.5), RGB(hex: 0x0000FF))
-        XCTAssertEqual(RGB(hue: 480, saturation: 1, lightness: 0.5), RGB(hex: 0x00FF00))
-    }
-}
-
 final class ProceduralPaletteTests: XCTestCase {
     /// Every outcode shape UKPostcode accepts, plus the Giro special case.
     private func everyOutcodeShape() -> [String] {
@@ -110,11 +93,45 @@ final class ProceduralPaletteTests: XCTestCase {
         )
     }
 
+    func testDeepThemesArePerceptuallyEven() {
+        var lowest = Double.infinity
+        var highest = 0.0
+        var lowestCode = ""
+        var highestCode = ""
+        for outcode in everyOutcodeShape() {
+            let theme = ProceduralPalette.theme(forOutcode: outcode)
+            let luminance = theme.primary.relativeLuminance
+            // Pale themes are a deliberately different band; compare like with like.
+            guard luminance < 0.4 else { continue }
+            if luminance < lowest { lowest = luminance; lowestCode = outcode }
+            if luminance > highest { highest = luminance; highestCode = outcode }
+        }
+        // HSL gave 4.5x. OKLCH holds lightness perceptually, so the spread that
+        // survives is only what gamut mapping forced.
+        XCTAssertLessThanOrEqual(
+            highest / lowest,
+            1.7,
+            "deep themes still vary too much in brightness: \(lowestCode) \(lowest) vs \(highestCode) \(highest)"
+        )
+    }
+
+    func testAccentRotationVaries() {
+        var rotations = Set<Int>()
+        for outcode in everyOutcodeShape() {
+            rotations.insert(ProceduralPalette.accentRotation(forOutcode: outcode))
+        }
+        XCTAssertGreaterThanOrEqual(
+            rotations.count,
+            3,
+            "a fixed accent rotation puts the same accent family on most of the country"
+        )
+    }
+
     func testMuddyHuesAreExcluded() {
         for outcode in everyOutcodeShape() {
             let hue = ProceduralPalette.hue(forOutcode: outcode)
             XCTAssertFalse(
-                (52.0..<78.0).contains(hue),
+                (65.0..<130.0).contains(hue),
                 "\(outcode) landed in the muddy olive band at \(hue)"
             )
         }
