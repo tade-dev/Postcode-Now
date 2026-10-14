@@ -28,6 +28,12 @@ struct RootView: View {
                     reduceMotion: reduceMotion,
                     isSharing: model.isSharing,
                     toastToken: model.toastToken,
+                    elapsed: RevealTimeline.duration(
+                        outcodeCount: session.fix.postcode.outcode.count,
+                        incodeCount: session.fix.postcode.incode.count
+                    ),
+                    searchLoop: 0,
+                    handoffLoop: 0,
                     onShare: { model.sharePostcode() },
                     onCopy: { model.copyPostcode() },
                     onRetry: { model.start() }

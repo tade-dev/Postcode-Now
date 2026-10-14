@@ -194,15 +194,3 @@ struct CopiedToast: View {
         }
     }
 }
-
-final class LockTick {
-    private var fired = false
-
-    func consider(elapsed: Double, enabled: Bool) {
-        guard enabled, !fired, elapsed >= MotionTiming.incodeDelay else { return }
-        fired = true
-        DispatchQueue.main.async {
-            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-        }
-    }
-}
