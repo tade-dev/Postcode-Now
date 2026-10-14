@@ -15,11 +15,24 @@ enum HeroFitting {
         return CGFloat(max(34, fitted))
     }
 
-    private static func measuredWidth(_ text: String, size: Double) -> Double {
+    /// Width of each character at this size, in order. Laying characters out
+    /// from these keeps per-character rendering the same total width as the
+    /// whole-string measurement `pointSize` fitted against.
+    static func characterAdvances(text: String, size: CGFloat) -> [CGFloat] {
+        let font = heroFont(size: Double(size))
+        return text.map { character in
+            (String(character) as NSString).size(withAttributes: [.font: font]).width
+        }
+    }
+
+    private static func heroFont(size: Double) -> UIFont {
         let base = UIFont.systemFont(ofSize: size, weight: .bold)
         let descriptor = base.fontDescriptor.withDesign(.rounded) ?? base.fontDescriptor
-        let font = UIFont(descriptor: descriptor, size: size)
-        let raw = (text as NSString).size(withAttributes: [.font: font]).width
+        return UIFont(descriptor: descriptor, size: size)
+    }
+
+    private static func measuredWidth(_ text: String, size: Double) -> Double {
+        let raw = (text as NSString).size(withAttributes: [.font: heroFont(size: size)]).width
         let tracking = HeroType.tracking * Double(max(text.count - 1, 0))
         return Double(raw) + tracking
     }
