@@ -81,37 +81,84 @@ final class HandoffTests: XCTestCase {
     /// Review Focus 1: a cached fix returns in ~50ms, so the rings are still
     /// near the centre when the collapse starts. It must still read as a
     /// collapse inward, not as rings appearing from nowhere.
+    ///
+    /// This is a two-scenario test, deliberately: a handoff near the start
+    /// of the loop (ring 0 barely left the centre, almost no opacity to
+    /// donate) is compared against a handoff mid-travel (ring 0 fully
+    /// visible, far from the lock radius). Asserting on only one handoff
+    /// can't tell "the near-centre path works" from "every path looks like
+    /// this regardless of handoff" — the two must read differently at the
+    /// start, and still both resolve correctly by the end of the collapse.
     func testACollapseFromAnAlmostUnstartedScanStillTravelsInward() {
-        let handoff = 0.01
-        let atStart = RevealTimeline.sample(
+        let nearCentreHandoff = 0.01
+        let midTravelHandoff = 0.5
+
+        let nearCentreStart = RevealTimeline.sample(
             elapsed: 0,
-            searchLoop: handoff,
-            handoffLoop: handoff,
+            searchLoop: nearCentreHandoff,
+            handoffLoop: nearCentreHandoff,
             outcodeCount: 2,
             incodeCount: 3,
             reduceMotion: false
         )
-        let atEnd = RevealTimeline.sample(
-            elapsed: RevealTiming.collapse,
-            searchLoop: handoff,
-            handoffLoop: handoff,
+        let midTravelStart = RevealTimeline.sample(
+            elapsed: 0,
+            searchLoop: midTravelHandoff,
+            handoffLoop: midTravelHandoff,
             outcodeCount: 2,
             incodeCount: 3,
             reduceMotion: false
         )
 
-        for index in atStart.rings.indices {
+        // Premise: at the near-unstarted handoff, ring 0 (the unstaggered
+        // ring, whose phase equals the global loop) really is close to the
+        // centre and nearly invisible at the moment the fix lands — well
+        // below the brightness of a ring caught mid-travel.
+        XCTAssertLessThan(
+            nearCentreStart.rings[0].opacity, 0.05,
+            "a ring 1% into the loop should barely have faded in"
+        )
+        XCTAssertGreaterThan(
+            midTravelStart.rings[0].opacity, 0.2,
+            "a ring halfway through the loop should be fully visible"
+        )
+
+        // And it genuinely has almost nowhere to travel: starting a few
+        // points off the lock radius, not tens of points off it the way
+        // the mid-travel ring does. This is the thing the two scenarios
+        // must disagree about, so a bug that ignores handoffLoop (e.g.
+        // always freezing from loop 0, or from searchLoop instead) would
+        // make these two numbers collapse to the same value and fail here.
+        let nearCentreTravel = nearCentreStart.rings[0].radius - RevealTiming.lockRadius
+        let midTravelTravel = midTravelStart.rings[0].radius - RevealTiming.lockRadius
+        XCTAssertLessThan(nearCentreTravel, 10, "near-centre ring should start close to the lock radius")
+        XCTAssertGreaterThan(midTravelTravel, 30, "mid-travel ring should start far from the lock radius")
+
+        // The lock ring doesn't know or care how little the scan ring had
+        // to donate — it still has to rise from ~0 to ~1 over the collapse,
+        // which is exactly what carries the moment when the scan ring (the
+        // near-centre case) had almost no opacity of its own to fade out of.
+        let nearCentreEnd = RevealTimeline.sample(
+            elapsed: RevealTiming.collapse,
+            searchLoop: nearCentreHandoff,
+            handoffLoop: nearCentreHandoff,
+            outcodeCount: 2,
+            incodeCount: 3,
+            reduceMotion: false
+        )
+        for index in nearCentreStart.rings.indices {
             XCTAssertEqual(
-                atEnd.rings[index].radius,
+                nearCentreEnd.rings[index].radius,
                 RevealTiming.lockRadius,
                 accuracy: 0.001,
                 "ring \(index) did not arrive at the lock radius"
             )
         }
-        // The lock ring must carry the moment when the scan rings had no
-        // opacity to donate.
-        XCTAssertGreaterThan(atEnd.lockOpacity, 0.5)
-        XCTAssertLessThan(atStart.lockOpacity, atEnd.lockOpacity)
+        XCTAssertLessThan(nearCentreStart.lockOpacity, 0.01, "the lock should not have appeared yet")
+        XCTAssertGreaterThan(
+            nearCentreEnd.lockOpacity, 0.95,
+            "the lock ring must carry full opacity by the end of the collapse"
+        )
     }
 
     func testSearchingBranchIgnoresHandoffEntirely() {
