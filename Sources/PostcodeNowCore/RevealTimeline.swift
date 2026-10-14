@@ -83,13 +83,19 @@ public enum RevealTimeline {
         )
     }
 
-    /// Act 2 only in this task. Task 4 adds the bloom, the wash and the chrome.
     private static func revealing(
         elapsed: Double,
         handoffLoop: Double,
         outcodeCount: Int,
         incodeCount: Int
     ) -> RevealSample {
+        let count = max(0, outcodeCount + incodeCount)
+        let total = RevealTiming.duration(outcodeCount: outcodeCount, incodeCount: incodeCount)
+        if elapsed >= total {
+            return .settled(outcodeCount: outcodeCount, incodeCount: incodeCount)
+        }
+
+        // Act 2 — the rings collapse from wherever they were into the lock.
         let collapse = Easing.easeInOutCubic(
             Easing.unit(elapsed, start: 0, duration: RevealTiming.collapse)
         )
@@ -101,21 +107,79 @@ public enum RevealTimeline {
                 lineWidth: ring.lineWidth
             )
         }
+        let contraction = Easing.easeOutBack(
+            Easing.unit(elapsed, start: RevealTiming.collapse, duration: 0.17)
+        )
 
-        var sample = searching(
-            searchLoop: handoffLoop,
-            characterCount: outcodeCount + incodeCount
+        // Act 3 — the lock stretches into a line, then emits the characters.
+        let stretch = Easing.easeInOutCubic(
+            Easing.unit(elapsed, start: RevealTiming.stretchStart, duration: RevealTiming.stretch)
         )
-        sample.rings = rings
-        sample.lockOpacity = collapse
-        sample.lockRadius = RevealTiming.lockRadius
-            + (RevealTiming.lockContracted - RevealTiming.lockRadius)
-            * Easing.easeOutBack(
-                Easing.unit(elapsed, start: RevealTiming.collapse, duration: 0.17)
+        let lineFade = Easing.easeInCubic(
+            Easing.unit(
+                elapsed,
+                start: RevealTiming.lineDissolveStart,
+                duration: RevealTiming.lineDissolve
             )
-        sample.captionOpacity = 1 - Easing.easeOutCubic(
-            Easing.unit(elapsed, start: 0, duration: RevealTiming.captionOut)
         )
-        return sample
+        let characters = (0..<count).map { index -> CharacterState in
+            let start = RevealTiming.characterStart(index: index, outcodeCount: outcodeCount)
+            let spring = Easing.clamp01(
+                SpringCurve.value(
+                    response: RevealTiming.characterResponse,
+                    dampingFraction: RevealTiming.characterDamping,
+                    time: elapsed - start
+                )
+            )
+            return CharacterState(
+                opacity: spring,
+                offsetY: 14 * (1 - spring),
+                scale: 0.86 + 0.14 * spring,
+                weightBlend: spring
+            )
+        }
+
+        // Act 4 — the colour the characters emit, then the labels and the CTA.
+        let wash = Easing.easeInOutCubic(
+            Easing.unit(elapsed, start: RevealTiming.washStart, duration: RevealTiming.wash)
+        )
+        let label = Easing.easeOutCubic(
+            Easing.unit(elapsed, start: RevealTiming.labelStart, duration: RevealTiming.label)
+        )
+        let banner = Easing.easeOutCubic(
+            Easing.unit(elapsed, start: RevealTiming.bannerStart, duration: RevealTiming.banner)
+        )
+        let cta = Easing.clamp01(
+            SpringCurve.value(
+                response: RevealTiming.ctaResponse,
+                dampingFraction: RevealTiming.ctaDamping,
+                time: elapsed - RevealTiming.ctaStart(
+                    outcodeCount: outcodeCount,
+                    incodeCount: incodeCount
+                )
+            )
+        )
+
+        return RevealSample(
+            rings: rings,
+            lockRadius: RevealTiming.lockRadius
+                + (RevealTiming.lockContracted - RevealTiming.lockRadius) * contraction,
+            lockOpacity: collapse * (1 - stretch),
+            lineLength: stretch,
+            lineThickness: 2 * stretch,
+            lineOpacity: stretch * (1 - lineFade),
+            characters: characters,
+            washProgress: wash,
+            captionOpacity: 1 - Easing.easeOutCubic(
+                Easing.unit(elapsed, start: 0, duration: RevealTiming.captionOut)
+            ),
+            wordmarkOpacity: 1,
+            sectionOpacity: label,
+            districtOpacity: label,
+            districtOffset: 3 * (1 - label),
+            ctaOpacity: cta,
+            ctaOffset: 10 * (1 - cta),
+            bannerOpacity: banner
+        )
     }
 }

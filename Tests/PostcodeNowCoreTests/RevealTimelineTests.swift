@@ -154,3 +154,124 @@ final class HandoffTests: XCTestCase {
         }
     }
 }
+
+final class BloomAndWashTests: XCTestCase {
+    private func sample(at elapsed: Double) -> RevealSample {
+        RevealTimeline.sample(
+            elapsed: elapsed,
+            searchLoop: 0.5,
+            handoffLoop: 0.5,
+            outcodeCount: 2,
+            incodeCount: 3,
+            reduceMotion: false
+        )
+    }
+
+    func testTheLineStretchesOutOfTheLockBeforeAnyCharacterMoves() {
+        let beforeStretch = sample(at: RevealTiming.stretchStart - 0.01)
+        XCTAssertEqual(beforeStretch.lineLength, 0, accuracy: 0.001)
+
+        let stretched = sample(at: RevealTiming.bloomStart)
+        XCTAssertEqual(stretched.lineLength, 1, accuracy: 0.01)
+        XCTAssertGreaterThan(stretched.lineOpacity, 0.5)
+
+        // Nothing has bloomed yet at the instant the line completes.
+        XCTAssertEqual(stretched.characters[0].opacity, 0, accuracy: 0.02)
+    }
+
+    func testCharactersArriveInOrderWithABeatBetweenTheHalves() {
+        let justAfterFirst = sample(at: RevealTiming.bloomStart + 0.03)
+        XCTAssertGreaterThan(justAfterFirst.characters[0].opacity, 0)
+        XCTAssertEqual(justAfterFirst.characters[4].opacity, 0, accuracy: 0.001)
+
+        // Inside the beat, the outcode has started but the incode has not.
+        let duringBeat = sample(
+            at: RevealTiming.characterStart(index: 2, outcodeCount: 2) - 0.01
+        )
+        XCTAssertGreaterThan(duringBeat.characters[1].opacity, 0)
+        XCTAssertEqual(duringBeat.characters[2].opacity, 0, accuracy: 0.001)
+    }
+
+    func testTheWashStartsAsTheFirstCharacterLandsNotBefore() {
+        let beforeWash = sample(at: RevealTiming.washStart - 0.01)
+        XCTAssertEqual(beforeWash.washProgress, 0, accuracy: 0.001)
+
+        let washed = sample(at: RevealTiming.washStart + RevealTiming.wash)
+        XCTAssertEqual(washed.washProgress, 1, accuracy: 0.001)
+
+        let halfway = sample(at: RevealTiming.washStart + RevealTiming.wash / 2)
+        XCTAssertEqual(halfway.washProgress, 0.5, accuracy: 0.02)
+    }
+
+    func testTheLineDissolvesOnceTheCodeIsThere() {
+        let dissolved = sample(
+            at: RevealTiming.lineDissolveStart + RevealTiming.lineDissolve
+        )
+        XCTAssertEqual(dissolved.lineOpacity, 0, accuracy: 0.001)
+    }
+
+    func testTheCTAIsLast() {
+        let ctaStart = RevealTiming.ctaStart(outcodeCount: 2, incodeCount: 3)
+        XCTAssertEqual(sample(at: ctaStart - 0.01).ctaOpacity, 0, accuracy: 0.001)
+        XCTAssertGreaterThan(sample(at: ctaStart + 0.2).ctaOpacity, 0.5)
+    }
+
+    func testEverythingLandsExactlySettledAtDuration() {
+        let total = RevealTimeline.duration(outcodeCount: 2, incodeCount: 3)
+        let settled = RevealSample.settled(outcodeCount: 2, incodeCount: 3)
+
+        XCTAssertEqual(sample(at: total), settled)
+        XCTAssertEqual(sample(at: total + 10), settled)
+    }
+
+    func testEveryFieldStaysInRangeAcrossTheWholeReveal() {
+        let total = RevealTimeline.duration(outcodeCount: 4, incodeCount: 3)
+        var time = 0.0
+        while time <= total + 0.1 {
+            let frame = RevealTimeline.sample(
+                elapsed: time,
+                searchLoop: 0.5,
+                handoffLoop: 0.5,
+                outcodeCount: 4,
+                incodeCount: 3,
+                reduceMotion: false
+            )
+            for value in [
+                frame.lockOpacity, frame.lineOpacity, frame.lineLength,
+                frame.washProgress, frame.captionOpacity, frame.wordmarkOpacity,
+                frame.sectionOpacity, frame.districtOpacity, frame.ctaOpacity,
+                frame.bannerOpacity,
+            ] {
+                XCTAssertGreaterThanOrEqual(value, 0, "negative at t=\(time)")
+                XCTAssertLessThanOrEqual(value, 1, "above 1 at t=\(time)")
+            }
+            for character in frame.characters {
+                XCTAssertGreaterThanOrEqual(character.opacity, 0, "t=\(time)")
+                XCTAssertLessThanOrEqual(character.opacity, 1, "t=\(time)")
+                XCTAssertGreaterThan(character.scale, 0, "a zero scale collapses the glyph at t=\(time)")
+                XCTAssertLessThanOrEqual(character.scale, 1.1, "t=\(time)")
+            }
+            time += 0.001
+        }
+    }
+
+    func testOpacitiesOnlyEverIncrease() {
+        let total = RevealTimeline.duration(outcodeCount: 2, incodeCount: 3)
+        var previous = sample(at: 0)
+        var time = 0.001
+        while time <= total {
+            let frame = sample(at: time)
+            XCTAssertGreaterThanOrEqual(
+                frame.washProgress, previous.washProgress - 0.0001, "wash reversed at t=\(time)"
+            )
+            XCTAssertGreaterThanOrEqual(
+                frame.ctaOpacity, previous.ctaOpacity - 0.0001, "cta reversed at t=\(time)"
+            )
+            XCTAssertLessThanOrEqual(
+                frame.captionOpacity, previous.captionOpacity + 0.0001, "caption returned at t=\(time)"
+            )
+            previous = frame
+            time += 0.001
+        }
+    }
+}
