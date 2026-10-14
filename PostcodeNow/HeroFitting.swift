@@ -31,9 +31,12 @@ enum HeroFitting {
         return UIFont(descriptor: descriptor, size: size)
     }
 
+    /// Measures against the same unkerned per-character total the canvas
+    /// actually draws, not the kerned whole-string width — the two differ
+    /// because NSString's whole-string measurement applies pair kerning
+    /// that per-character layout does not.
     private static func measuredWidth(_ text: String, size: Double) -> Double {
-        let raw = (text as NSString).size(withAttributes: [.font: heroFont(size: size)]).width
-        let tracking = HeroType.tracking * Double(max(text.count - 1, 0))
-        return Double(raw) + tracking
+        let advances = characterAdvances(text: text, size: CGFloat(size)).map(Double.init)
+        return HeroMetrics.totalWidth(advances: advances, tracking: HeroType.tracking)
     }
 }
