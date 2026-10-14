@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A10000000000000000000002"
-               BuildableName = "Placode.app"
-               BlueprintName = "Placode"
-               ReferencedContainer = "container:Placode.xcodeproj">
+               BuildableName = "PostcodeNow.app"
+               BlueprintName = "PostcodeNow"
+               ReferencedContainer = "container:PostcodeNow.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,9 +44,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A10000000000000000000002"
-            BuildableName = "Placode.app"
-            BlueprintName = "Placode"
-            ReferencedContainer = "container:Placode.xcodeproj">
+            BuildableName = "PostcodeNow.app"
+            BlueprintName = "PostcodeNow"
+            ReferencedContainer = "container:PostcodeNow.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -61,9 +61,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A10000000000000000000002"
-            BuildableName = "Placode.app"
-            BlueprintName = "Placode"
-            ReferencedContainer = "container:Placode.xcodeproj">
+            BuildableName = "PostcodeNow.app"
+            BlueprintName = "PostcodeNow"
+            ReferencedContainer = "container:PostcodeNow.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

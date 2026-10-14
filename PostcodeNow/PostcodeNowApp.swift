@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct PlacodeApp: App {
+struct PostcodeNowApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()

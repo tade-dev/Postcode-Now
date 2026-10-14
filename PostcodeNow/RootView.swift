@@ -1,4 +1,4 @@
-import PlacodeCore
+import PostcodeNowCore
 import SwiftUI
 
 @MainActor

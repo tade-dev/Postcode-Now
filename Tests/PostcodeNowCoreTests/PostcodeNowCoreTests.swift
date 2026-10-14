@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import PlacodeCore
+@testable import PostcodeNowCore
 
 final class PostcodeTests: XCTestCase {
     func testSplitsSpacedAndCompactForms() {
@@ -169,16 +169,16 @@ final class ShareAndCopyTests: XCTestCase {
         XCTAssertEqual(ProductCopy.permissionTitle, "Location is turned off")
         XCTAssertEqual(
             ProductCopy.locationUsage,
-            "Placode needs Location to show the nearest UK postcode."
+            "PostcodeNow needs Location to show the nearest UK postcode."
         )
         XCTAssertEqual(
             ProductCopy.permissionPath,
-            "Settings → Placode → Location → While Using the App"
+            "Settings → PostcodeNow → Location → While Using the App"
         )
         XCTAssertEqual(ProductCopy.weakTitle, "Using approximate location")
         XCTAssertEqual(ProductCopy.weakBody, "Move outdoors for a better fix")
         XCTAssertEqual(ProductCopy.outdatedTitle, "May be outdated")
-        XCTAssertEqual(ProductCopy.wordmark, "Placode")
+        XCTAssertEqual(ProductCopy.wordmark, "PostcodeNow")
         XCTAssertEqual(ProductCopy.nearest, "Nearest postcode")
     }
 }
@@ -406,7 +406,7 @@ final class InfoPlistContractTests: XCTestCase {
             .deletingLastPathComponent()
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-            .appendingPathComponent("Placode/Info.plist")
+            .appendingPathComponent("PostcodeNow/Info.plist")
         let data = try Data(contentsOf: plistURL)
         let plist = try XCTUnwrap(
             PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any]
