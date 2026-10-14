@@ -22,4 +22,17 @@ enum Easing {
         }
         return 1 - pow(-2 * x + 2, 3) / 2
     }
+
+    static func easeInCubic(_ t: Double) -> Double {
+        let x = clamp01(t)
+        return x * x * x
+    }
+
+    /// Overshoots past 1 before settling. Used for the lock's anticipation.
+    static func easeOutBack(_ t: Double) -> Double {
+        let x = clamp01(t)
+        let c1 = 1.70158
+        let c3 = c1 + 1
+        return 1 + c3 * pow(x - 1, 3) + c1 * pow(x - 1, 2)
+    }
 }
