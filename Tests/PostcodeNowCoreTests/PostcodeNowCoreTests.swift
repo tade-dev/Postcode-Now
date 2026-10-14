@@ -83,8 +83,12 @@ final class PaletteTests: XCTestCase {
         XCTAssertEqual(PlacePalette.resolve(outcode: "M20", district: "Manchester").id, "M1")
         XCTAssertEqual(PlacePalette.resolve(outcode: "EH2", district: "City of Edinburgh").id, "EH1")
         XCTAssertEqual(PlacePalette.resolve(outcode: "NE2", district: "Newcastle upon Tyne").id, "NE1")
-        XCTAssertEqual(PlacePalette.resolve(outcode: "ZZ9", district: "Nowhere").id, "neutral")
-        XCTAssertEqual(PlacePalette.resolve(outcode: "ZZ9", district: nil).primary.hex, 0x111111)
+        // ZZ9 is uncurated and has no district alias, so it now gets a generated
+        // theme rather than falling through to grey neutral.
+        XCTAssertEqual(PlacePalette.resolve(outcode: "ZZ9", district: "Nowhere").id, "ZZ9")
+        XCTAssertEqual(PlacePalette.resolve(outcode: "ZZ9", district: nil).id, "ZZ9")
+        // Only a genuinely empty outcode still falls through to neutral.
+        XCTAssertEqual(PlacePalette.resolve(outcode: "", district: nil).id, "neutral")
     }
 
     func testCuratedContrast() {

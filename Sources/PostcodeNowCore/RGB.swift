@@ -17,6 +17,23 @@ public struct RGB: Equatable, Hashable, Sendable {
         b = UInt8(hex & 0xFF)
     }
 
+    /// Hue in degrees (wraps), saturation and lightness in 0...1 (clamped).
+    public init(hue: Double, saturation: Double, lightness: Double) {
+        let h = ((hue.truncatingRemainder(dividingBy: 360)) + 360)
+            .truncatingRemainder(dividingBy: 360) / 360
+        let s = min(1, max(0, saturation))
+        let l = min(1, max(0, lightness))
+
+        func component(_ offset: Double) -> UInt8 {
+            let k = (offset + h * 12).truncatingRemainder(dividingBy: 12)
+            let a = s * min(l, 1 - l)
+            let value = l - a * max(-1, min(min(k - 3, 9 - k), 1))
+            return UInt8((value * 255).rounded())
+        }
+
+        self.init(r: component(0), g: component(8), b: component(4))
+    }
+
     var hex: UInt32 {
         (UInt32(r) << 16) | (UInt32(g) << 8) | UInt32(b)
     }

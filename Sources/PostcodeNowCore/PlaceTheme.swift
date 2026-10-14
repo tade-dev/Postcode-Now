@@ -44,7 +44,8 @@ public enum PlacePalette {
                 return theme
             }
         }
-        return .neutral
+        guard !key.isEmpty else { return .neutral }
+        return ProceduralPalette.theme(forOutcode: key)
     }
 
     static var curated: [PlaceTheme] {
