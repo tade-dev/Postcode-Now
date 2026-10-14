@@ -322,3 +322,37 @@ final class BloomAndWashTests: XCTestCase {
         }
     }
 }
+
+final class HapticCueTests: XCTestCase {
+    func testOneLockPlusOnePerCharacter() {
+        let cues = RevealTimeline.hapticCues(outcodeCount: 2, incodeCount: 3)
+        XCTAssertEqual(cues.count, 6)
+        XCTAssertEqual(cues.first?.style, .rigid)
+        XCTAssertEqual(cues.dropFirst().filter { $0.style == .soft }.count, 5)
+    }
+
+    func testCuesAreStrictlyOrdered() {
+        for outcodeCount in 2...4 {
+            let cues = RevealTimeline.hapticCues(outcodeCount: outcodeCount, incodeCount: 3)
+            for pair in zip(cues, cues.dropFirst()) {
+                XCTAssertLessThan(pair.0.time, pair.1.time, "cues out of order")
+            }
+        }
+    }
+
+    func testEveryCueLandsInsideTheReveal() {
+        for outcodeCount in 2...4 {
+            let total = RevealTimeline.duration(outcodeCount: outcodeCount, incodeCount: 3)
+            for cue in RevealTimeline.hapticCues(outcodeCount: outcodeCount, incodeCount: 3) {
+                XCTAssertGreaterThanOrEqual(cue.time, 0)
+                XCTAssertLessThanOrEqual(cue.time, total, "a cue would fire after the reveal ended")
+            }
+        }
+    }
+
+    func testTheLockFiresBeforeAnyCharacter() {
+        let cues = RevealTimeline.hapticCues(outcodeCount: 2, incodeCount: 3)
+        XCTAssertEqual(cues[0].time, RevealTiming.lockHaptic, accuracy: 0.0001)
+        XCTAssertGreaterThan(cues[1].time, RevealTiming.bloomStart)
+    }
+}

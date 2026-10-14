@@ -182,4 +182,18 @@ public enum RevealTimeline {
             bannerOpacity: banner
         )
     }
+
+    /// One firm impact as the rings lock, then one soft impact as each
+    /// character lands, so the code arrives in the hand as well as the eye.
+    public static func hapticCues(outcodeCount: Int, incodeCount: Int) -> [HapticCue] {
+        let count = max(0, outcodeCount + incodeCount)
+        var cues = [HapticCue(time: RevealTiming.lockHaptic, style: .rigid)]
+        for index in 0..<count {
+            let start = RevealTiming.characterStart(index: index, outcodeCount: outcodeCount)
+            cues.append(
+                HapticCue(time: start + RevealTiming.characterLand, style: .soft)
+            )
+        }
+        return cues
+    }
 }
