@@ -60,16 +60,38 @@ struct RevealCanvas: View, Animatable {
 
     /// The colour the postcode emits. It grows from the hero's baseline
     /// outward, so it reads as coming from the code rather than from the
-    /// window. The radius covers the diagonal so the corners fill last.
+    /// window.
+    ///
+    /// Drawn as a hard-edged radial gradient on a screen-sized layer, not as
+    /// a scaled `Circle`. A circle large enough to cover the screen needs a
+    /// frame of at least the screen's diagonal, and SwiftUI rasterises that
+    /// frame: at `diagonal * 2` that is tens of millions of pixels every
+    /// frame, which stalled the reveal to roughly one frame per second the
+    /// instant the wash began.
+    ///
+    /// The corners are the last thing covered, so full coverage needs a
+    /// radius of half the diagonal — `diagonal * 2` as a diameter was four
+    /// times the area it needed, and it also meant the screen was fully
+    /// washed at `washProgress` 0.5 rather than 1.
     private func wash(frame: RevealSample, theme: PlaceTheme, size: CGSize) -> some View {
-        let diagonal = sqrt(size.width * size.width + size.height * size.height)
+        let corner = sqrt(size.width * size.width + size.height * size.height) / 2
+        let edge = max(0.001, corner * 1.01 * frame.washProgress)
+        let colour = session.fix.theme.primary.color
         return ZStack {
             chrome.primary.color
-            Circle()
-                .fill(session.fix.theme.primary.color)
-                .frame(width: diagonal * 2, height: diagonal * 2)
-                .scaleEffect(max(0.001, frame.washProgress))
-                .position(x: size.width / 2, y: size.height / 2)
+            Rectangle()
+                .fill(
+                    RadialGradient(
+                        stops: [
+                            .init(color: colour, location: 0),
+                            .init(color: colour, location: 0.995),
+                            .init(color: .clear, location: 1)
+                        ],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: edge
+                    )
+                )
                 .opacity(frame.washProgress > 0 ? 1 : 0)
         }
         .ignoresSafeArea()
@@ -82,6 +104,10 @@ struct RevealCanvas: View, Animatable {
                 .font(.system(.footnote, design: .rounded).weight(.medium))
                 .foregroundStyle(theme.onPrimary.color.opacity(HeroType.mutedOpacity))
                 .opacity(frame.sectionOpacity)
+                // `heroLabel` on the characters already says "nearest
+                // postcode"; leaving this visible to VoiceOver would make the
+                // hero three stops instead of one and say it twice.
+                .accessibilityHidden(true)
 
             ZStack {
                 rings(frame: frame, color: chrome.onPrimary.color)
@@ -99,22 +125,30 @@ struct RevealCanvas: View, Animatable {
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
                     .multilineTextAlignment(.center)
+                    // Also carried by `heroLabel`, for the same reason.
+                    .accessibilityHidden(true)
             }
 
-            if elapsed == nil {
-                VStack(spacing: 6) {
-                    Text(ProductCopy.findingTitle)
-                        .font(.system(.title2, design: .rounded).weight(.semibold))
-                        .foregroundStyle(chrome.onPrimary.color)
-                    Text(ProductCopy.findingCaption)
-                        .font(.system(.caption, design: .rounded))
-                        .foregroundStyle(chrome.onPrimary.color.opacity(0.62))
-                }
-                .multilineTextAlignment(.center)
-                .opacity(frame.captionOpacity)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel("\(ProductCopy.findingTitle). \(ProductCopy.findingCaption)")
+            // Always in the tree, governed by opacity alone. It used to be
+            // gated on `elapsed == nil`, but `animatableData` can only write
+            // a concrete Double, so the optional is already non-nil on the
+            // reveal's first interpolated frame: the caption was cut in one
+            // frame instead of fading over `captionOut`. Keeping it present
+            // also keeps the stage's height constant, so nothing shifts when
+            // it goes.
+            VStack(spacing: 6) {
+                Text(ProductCopy.findingTitle)
+                    .font(.system(.title2, design: .rounded).weight(.semibold))
+                    .foregroundStyle(chrome.onPrimary.color)
+                Text(ProductCopy.findingCaption)
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundStyle(chrome.onPrimary.color.opacity(0.62))
             }
+            .multilineTextAlignment(.center)
+            .opacity(frame.captionOpacity)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(ProductCopy.findingTitle). \(ProductCopy.findingCaption)")
+            .accessibilityHidden(frame.captionOpacity <= 0)
         }
         .padding(.horizontal, 24)
         .accessibilityElement(children: .contain)

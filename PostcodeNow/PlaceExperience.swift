@@ -1,6 +1,29 @@
 import PostcodeNowCore
 import SwiftUI
 
+/// Re-renders its content against the reveal's interpolated clock.
+///
+/// A plain read of `elapsed` is the animation's *target*, not the frame being
+/// shown: `withAnimation` sets state immediately and only `Animatable` views
+/// see the values in between. Sampling the timeline from that target ramped
+/// the CTA in linearly across the whole reveal instead of springing it in at
+/// the end, and left the buttons hit-testable from its first frame.
+/// `RevealCanvas` solves this for the canvas; this does it for the chrome
+/// that sits outside the canvas.
+private struct RevealClock<Content: View>: View, Animatable {
+    var elapsed: Double?
+    @ViewBuilder var content: (Double?) -> Content
+
+    var animatableData: Double {
+        get { elapsed ?? 0 }
+        set { elapsed = newValue }
+    }
+
+    var body: some View {
+        content(elapsed)
+    }
+}
+
 /// Hosts the canvas and everything the timeline does not drive: the buttons,
 /// the notice banner, the share scrim, the copied toast.
 struct PlaceExperience: View {
@@ -16,7 +39,7 @@ struct PlaceExperience: View {
     var onCopy: () -> Void
     var onRetry: () -> Void
 
-    private var sample: RevealSample {
+    private func sample(at elapsed: Double?) -> RevealSample {
         RevealTimeline.sample(
             elapsed: elapsed,
             searchLoop: searchLoop,
@@ -27,14 +50,11 @@ struct PlaceExperience: View {
         )
     }
 
-    private var theme: PlaceTheme {
-        ThemeInterpolation.frame(from: chrome, to: session.fix.theme, t: sample.washProgress)
+    private func theme(_ frame: RevealSample) -> PlaceTheme {
+        ThemeInterpolation.frame(from: chrome, to: session.fix.theme, t: frame.washProgress)
     }
 
     var body: some View {
-        let frame = sample
-        let resolved = theme
-
         ZStack {
             RevealCanvas(
                 elapsed: elapsed,
@@ -44,9 +64,12 @@ struct PlaceExperience: View {
                 session: session,
                 reduceMotion: reduceMotion
             )
-            VStack(spacing: 0) {
-                header(frame: frame, theme: resolved)
-                Spacer(minLength: 0)
+            RevealClock(elapsed: elapsed) { now in
+                let frame = sample(at: now)
+                VStack(spacing: 0) {
+                    header(frame: frame, theme: theme(frame))
+                    Spacer(minLength: 0)
+                }
             }
             Color.black
                 .opacity(isSharing ? 0.4 : 0)
@@ -69,7 +92,10 @@ struct PlaceExperience: View {
             value: isSharing
         )
         .safeAreaInset(edge: .bottom, spacing: 16) {
-            controls(frame: frame, theme: resolved)
+            RevealClock(elapsed: elapsed) { now in
+                let frame = sample(at: now)
+                controls(frame: frame, theme: theme(frame))
+            }
         }
     }
 
