@@ -42,11 +42,14 @@ struct RootView: View {
             reveal(chrome: chrome)
                 .allowsHitTesting(!showsEdgeScreen)
                 .accessibilityHidden(showsEdgeScreen)
-            // The crossfade is scoped to the edge screens on purpose.
-            // `.animation(_:value:)` replaces the transaction's animation for
-            // everything beneath it, so over the whole stack it would strip
-            // the reveal's own `withAnimation` and snap the canvas straight
-            // to settled.
+            // The crossfade is scoped to the edge screens on purpose: over
+            // the whole stack it would also animate the canvas's values on
+            // every edge transition, and it puts an `.animation(_:value:)`
+            // in the path of the reveal's own `withAnimation` for no reason.
+            // (Measured: an enclosing `.animation(_:value:)` whose value does
+            // not change does not in fact swallow the reveal's clock — the
+            // scrim's one in `PlaceExperience` sits above the canvas today
+            // and the reveal interpolates correctly through it.)
             edgeScreen
                 .animation(.easeInOut(duration: MotionTiming.edgeCrossfade), value: edgeKey)
         }
@@ -72,6 +75,17 @@ struct RootView: View {
                 model.resumeIfNeeded()
                 settleIfInterrupted()
             }
+        }
+        // Reduce Motion can be turned on mid-reveal, without the app ever
+        // leaving the foreground, by the Accessibility Shortcut. The canvas
+        // handles that on its own — `RevealTimeline.sample` resolves to the
+        // settled frame before it reads the clock at all — but the clock
+        // itself would stay mid-flight: a pending announcement would still be
+        // waiting out the rest of a reveal that is already over, and `skip`
+        // would still believe one was running. Settling it keeps the state
+        // honest about what is on screen.
+        .onChange(of: reduceMotion) { _, isOn in
+            if isOn { settleIfInterrupted() }
         }
         .onChange(of: model.phase) { _, newPhase in
             handlePhaseChange(newPhase)
