@@ -14,6 +14,11 @@ struct RootView: View {
     /// by the `Animatable` views that read it.
     @State private var revealElapsed: Double?
 
+    /// Fires the reveal's declared haptic cues as the clock crosses them.
+    /// A reference type held once here, not re-created per frame, so its
+    /// `firedThrough` cursor survives across `body` re-evaluations.
+    @State private var haptics = HapticScheduler()
+
     /// Wall clock for Act 1. The loop phase is derived from this per frame
     /// instead of being held in state, because a `@State` mutated inside
     /// `withAnimation` is already at its target the moment anyone reads it —
@@ -131,6 +136,7 @@ struct RootView: View {
             session: displaySession,
             chrome: chrome,
             reduceMotion: reduceMotion,
+            haptics: haptics,
             isSharing: model.isSharing,
             toastToken: model.toastToken,
             elapsed: revealElapsed,
@@ -221,6 +227,7 @@ struct RootView: View {
             revealElapsed = nil
             revealStart = nil
             revealToken += 1
+            haptics.prepare()
             startSearchLoop()
         default:
             revealElapsed = nil
@@ -241,6 +248,7 @@ struct RootView: View {
         // Freeze where the rings actually are, so Act 2 starts from there.
         handoffLoop = Self.loopPhase(from: searchStart, to: Date())
         revealStart = Date()
+        haptics.reset()
         revealElapsed = 0
         withAnimation(.linear(duration: total)) {
             revealElapsed = total

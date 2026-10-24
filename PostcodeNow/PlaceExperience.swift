@@ -30,6 +30,7 @@ struct PlaceExperience: View {
     var session: PlaceSession
     var chrome: PlaceTheme
     var reduceMotion: Bool
+    var haptics: HapticScheduler
     var isSharing: Bool
     var toastToken: Int
     var elapsed: Double?
@@ -62,7 +63,8 @@ struct PlaceExperience: View {
                 handoffLoop: handoffLoop,
                 chrome: chrome,
                 session: session,
-                reduceMotion: reduceMotion
+                reduceMotion: reduceMotion,
+                haptics: haptics
             )
             RevealClock(elapsed: elapsed) { now in
                 let frame = sample(at: now)
@@ -192,6 +194,7 @@ struct PlaceExperience: View {
         session: previewSession(outcode: "M1", incode: "1AE", district: "Manchester"),
         chrome: .locateDark,
         reduceMotion: true,
+        haptics: HapticScheduler(),
         isSharing: false,
         toastToken: 0,
         elapsed: RevealTimeline.duration(outcodeCount: 2, incodeCount: 3),
@@ -208,6 +211,7 @@ struct PlaceExperience: View {
         session: previewSession(outcode: "EX1", incode: "1AA", district: "East Devon"),
         chrome: .locateLight,
         reduceMotion: true,
+        haptics: HapticScheduler(),
         isSharing: false,
         toastToken: 0,
         elapsed: RevealTimeline.duration(outcodeCount: 2, incodeCount: 3),
@@ -230,6 +234,7 @@ struct PlaceExperience: View {
         ),
         chrome: .locateDark,
         reduceMotion: true,
+        haptics: HapticScheduler(),
         isSharing: false,
         toastToken: 0,
         elapsed: RevealTimeline.duration(outcodeCount: 2, incodeCount: 3),
@@ -246,6 +251,7 @@ struct PlaceExperience: View {
         session: previewSession(outcode: "M1", incode: "1AE", district: "Manchester"),
         chrome: .locateDark,
         reduceMotion: false,
+        haptics: HapticScheduler(),
         isSharing: false,
         toastToken: 0,
         elapsed: nil,
@@ -262,6 +268,7 @@ struct PlaceExperience: View {
         session: previewSession(outcode: "SW1A", incode: "1AA", district: "Westminster"),
         chrome: .locateDark,
         reduceMotion: true,
+        haptics: HapticScheduler(),
         isSharing: false,
         toastToken: 0,
         elapsed: RevealTimeline.duration(outcodeCount: 4, incodeCount: 3),

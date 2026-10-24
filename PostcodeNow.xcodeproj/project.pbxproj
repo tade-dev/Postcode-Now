@@ -17,6 +17,7 @@
 		B10000000000000000000009 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000009 /* RootView.swift */; };
 		B1000000000000000000000A /* PlaceExperience.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000A /* PlaceExperience.swift */; };
 		B1000000000000000000000E /* RevealCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000E /* RevealCanvas.swift */; };
+		B1000000000000000000000F /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000F /* Haptics.swift */; };
 		B1000000000000000000000B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000B /* Assets.xcassets */; };
 		B1000000000000000000000C /* PostcodeNowCore in Frameworks */ = {isa = PBXBuildFile; productRef = D10000000000000000000002 /* PostcodeNowCore */; };
 /* End PBXBuildFile section */
@@ -33,6 +34,7 @@
 		F10000000000000000000009 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		F1000000000000000000000A /* PlaceExperience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceExperience.swift; sourceTree = "<group>"; };
 		F1000000000000000000000E /* RevealCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealCanvas.swift; sourceTree = "<group>"; };
+		F1000000000000000000000F /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		F1000000000000000000000B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F1000000000000000000000C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F1000000000000000000000D /* PostcodeNow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PostcodeNow.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,6 +66,7 @@
 				F10000000000000000000009 /* RootView.swift */,
 				F1000000000000000000000A /* PlaceExperience.swift */,
 				F1000000000000000000000E /* RevealCanvas.swift */,
+				F1000000000000000000000F /* Haptics.swift */,
 				F1000000000000000000000B /* Assets.xcassets */,
 				F1000000000000000000000C /* Info.plist */,
 			);
@@ -172,6 +175,7 @@
 				B10000000000000000000009 /* RootView.swift in Sources */,
 				B1000000000000000000000A /* PlaceExperience.swift in Sources */,
 				B1000000000000000000000E /* RevealCanvas.swift in Sources */,
+				B1000000000000000000000F /* Haptics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

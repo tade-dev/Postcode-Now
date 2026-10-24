@@ -12,6 +12,7 @@ struct RevealCanvas: View, Animatable {
     var chrome: PlaceTheme
     var session: PlaceSession
     var reduceMotion: Bool
+    var haptics: HapticScheduler
 
     @ScaledMetric(relativeTo: .largeTitle) private var scaledHero: CGFloat = 80
 
@@ -36,8 +37,31 @@ struct RevealCanvas: View, Animatable {
         )
     }
 
+    /// Drives the haptic scheduler against the clock. Skipped while settled
+    /// (`elapsed == nil`, Act 1) and while Reduce Motion is on: Reduce Motion
+    /// jumps `elapsed` straight to its final value with no intermediate
+    /// frames (`RootView.beginReveal` assigns it outside `withAnimation`), so
+    /// `advance` would see every cue at once on its one and only call and
+    /// fire the whole schedule in a single burst instead of a rhythm.
+    private func fireHaptics(elapsed: Double?) {
+        guard let elapsed, !reduceMotion else { return }
+        haptics.advance(
+            to: elapsed,
+            cues: RevealTimeline.hapticCues(
+                outcodeCount: postcode.outcode.count,
+                incodeCount: postcode.incode.count
+            )
+        )
+    }
+
     var body: some View {
         let frame = sample
+        // A bare `if` statement here would be parsed by the implicit
+        // `@ViewBuilder` on `body` and fail to type-check, since its branch
+        // has no View-producing expression (`haptics.advance` returns
+        // `Void`). Routing it through a `let _ =` assignment keeps it a
+        // plain statement the builder passes through untouched.
+        let _ = fireHaptics(elapsed: elapsed)
         let theme = ThemeInterpolation.frame(
             from: chrome,
             to: session.fix.theme,
