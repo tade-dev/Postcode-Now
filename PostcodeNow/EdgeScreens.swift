@@ -36,17 +36,21 @@ struct PermissionScreen: View {
                 }
                 .accessibilityHidden(true)
                 .padding(.bottom, 6)
+                .edgeEntrance(index: 0)
                 Text(ProductCopy.permissionTitle)
                     .font(.system(.title, design: .rounded).weight(.bold))
                     .multilineTextAlignment(.center)
+                    .edgeEntrance(index: 1)
                 Text(ProductCopy.locationUsage)
                     .font(.system(.body, design: .rounded))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
+                    .edgeEntrance(index: 2)
                 Text(ProductCopy.permissionPath)
                     .font(.system(.body, design: .rounded).weight(.semibold))
                     .multilineTextAlignment(.center)
                     .padding(.top, 4)
+                    .edgeEntrance(index: 3)
             }
         }
         .safeAreaInset(edge: .bottom) {
@@ -55,6 +59,7 @@ struct PermissionScreen: View {
                 .padding(.bottom, 8)
                 .frame(maxWidth: 420)
                 .frame(maxWidth: .infinity)
+                .edgeEntrance(index: 4)
         }
     }
 }
@@ -69,10 +74,12 @@ struct FailureScreen: View {
                 Text(title)
                     .font(.system(.title, design: .rounded).weight(.bold))
                     .multilineTextAlignment(.center)
+                    .edgeEntrance(index: 0)
                 Text(message)
                     .font(.system(.body, design: .rounded))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
+                    .edgeEntrance(index: 1)
             }
         }
         .safeAreaInset(edge: .bottom) {
@@ -81,6 +88,7 @@ struct FailureScreen: View {
                 .padding(.bottom, 8)
                 .frame(maxWidth: 420)
                 .frame(maxWidth: .infinity)
+                .edgeEntrance(index: 4)
         }
     }
 
@@ -112,10 +120,12 @@ struct UnsupportedScreen: View {
                 Text(ProductCopy.unsupportedTitle)
                     .font(.system(.title, design: .rounded).weight(.bold))
                     .multilineTextAlignment(.center)
+                    .edgeEntrance(index: 0)
                 Text(ProductCopy.unsupportedBody)
                     .font(.system(.body, design: .rounded))
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
+                    .edgeEntrance(index: 1)
             }
         }
         .safeAreaInset(edge: .bottom) {
@@ -124,6 +134,36 @@ struct UnsupportedScreen: View {
                 .padding(.bottom, 8)
                 .frame(maxWidth: 420)
                 .frame(maxWidth: .infinity)
+                .edgeEntrance(index: 4)
         }
+    }
+}
+
+/// A short rise and fade, staggered by position, so an edge screen assembles
+/// rather than appearing all at once.
+struct EdgeEntrance: ViewModifier {
+    var index: Int
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var shown = false
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(shown || reduceMotion ? 1 : 0)
+            .offset(y: shown || reduceMotion ? 0 : 8)
+            .onAppear {
+                guard !reduceMotion else { return }
+                withAnimation(
+                    .easeOut(duration: MotionTiming.edgeIn)
+                        .delay(Double(index) * MotionTiming.edgeStagger)
+                ) {
+                    shown = true
+                }
+            }
+    }
+}
+
+extension View {
+    func edgeEntrance(index: Int) -> some View {
+        modifier(EdgeEntrance(index: index))
     }
 }
