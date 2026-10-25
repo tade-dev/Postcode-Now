@@ -37,12 +37,13 @@ struct RevealCanvas: View, Animatable {
         )
     }
 
-    /// Drives the haptic scheduler against the clock. Skipped while settled
+    /// Drives the haptic scheduler against the clock. Skipped while searching
     /// (`elapsed == nil`, Act 1) and while Reduce Motion is on: Reduce Motion
     /// jumps `elapsed` straight to its final value with no intermediate
     /// frames (`RootView.beginReveal` assigns it outside `withAnimation`), so
-    /// `advance` would see every cue at once on its one and only call and
-    /// fire the whole schedule in a single burst instead of a rhythm.
+    /// `advance` would see every cue at once and fire the whole schedule in a
+    /// single burst. `RootView.beginReveal` fires one confirmation impact
+    /// instead (`HapticScheduler.confirmSettled`).
     private func fireHaptics(elapsed: Double?) {
         guard let elapsed, !reduceMotion else { return }
         haptics.advance(

@@ -34,6 +34,14 @@ final class HapticScheduler {
         firedThrough = index - 1
     }
 
+    /// Reduce Motion lands the reveal settled in one step, so there is no
+    /// clock for `advance` to walk. Haptics are not motion and still fire:
+    /// one confirmation impact as the code lands, never the whole schedule
+    /// in a single burst.
+    func confirmSettled() {
+        fire(.rigid)
+    }
+
     private func fire(_ style: HapticStyle) {
         let generator = generators[style] ?? UIImpactFeedbackGenerator(style: style.uiStyle)
         generators[style] = generator

@@ -242,6 +242,7 @@ struct RootView: View {
         guard !reduceMotion else {
             revealStart = nil
             revealElapsed = total
+            haptics.confirmSettled()
             announceSettled(session: session, after: 0)
             return
         }
