@@ -11,6 +11,7 @@ public enum ProductCopy {
     public static let tryAgain = "Try Again"
     public static let shareAnyway = "Share Anyway"
     public static let retry = "Retry"
+    public static let refresh = "Refresh Postcode"
     public static let openSettings = "Open Settings"
 
     public static let permissionTitle = "Location is turned off"
