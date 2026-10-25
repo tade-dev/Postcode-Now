@@ -161,6 +161,11 @@ struct PlaceExperience: View {
                     color: theme.onPrimary.color,
                     action: onCopy
                 )
+                SecondaryTextButton(
+                    title: ProductCopy.refresh,
+                    color: theme.onPrimary.color,
+                    action: onRetry
+                )
             }
         }
         .padding(.horizontal, 24)

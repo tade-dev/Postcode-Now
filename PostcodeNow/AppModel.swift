@@ -35,6 +35,10 @@ final class AppModel {
     private let location: LocationService
     private let client: PostcodesClient
     private var cache: PostcodeFix?
+    private var fixedAt: Date?
+
+    /// How old a shown postcode may get before returning to the app looks again.
+    static let staleAfter: TimeInterval = 5 * 60
     private var generation = 0
     private var task: Task<Void, Never>?
 
@@ -68,6 +72,11 @@ final class AppModel {
         switch phase {
         case .permissionDenied, .failed(.location):
             if location.access == .authorized {
+                start()
+            }
+        case .place(let session):
+            let age = fixedAt.map { Date().timeIntervalSince($0) } ?? .infinity
+            if session.isOutdated || age > Self.staleAfter {
                 start()
             }
         default:
@@ -133,6 +142,7 @@ final class AppModel {
             phase = .unsupported
         case .place(let fix, let quality):
             cache = fix
+            fixedAt = Date()
             phase = .place(PlaceSession(fix: fix, quality: quality, isOutdated: false, token: token))
         }
     }
