@@ -201,12 +201,28 @@ struct RevealCanvas: View, Animatable {
     /// out of, then dissolves once they have arrived.
     private func line(frame: RevealSample, color: Color, width: CGFloat) -> some View {
         let available = max(1, width - 48)
+        let size = HeroFitting.pointSize(
+            text: heroText,
+            availableWidth: available,
+            scaledPreference: scaledHero
+        )
+        let advances = HeroFitting.characterAdvances(text: heroText, size: size)
+        let textWidth = HeroMetrics.totalWidth(
+            advances: advances.map(Double.init),
+            tracking: HeroType.tracking
+        )
+        // The glyphs are centred on their line box, so the baseline sits
+        // (ascender + descender) / 2 below the centre. Drawing the line there
+        // makes it the floor the characters rise from, not a strike-through.
+        let font = UIFont.systemFont(ofSize: size, weight: .bold)
+        let baseline = (font.ascender + font.descender) / 2
         return Capsule()
             .fill(color.opacity(frame.lineOpacity))
             .frame(
-                width: available * CGFloat(frame.lineLength),
+                width: CGFloat(textWidth) * CGFloat(frame.lineLength),
                 height: max(0.5, CGFloat(frame.lineThickness))
             )
+            .offset(y: baseline + 4)
             .allowsHitTesting(false)
             .accessibilityHidden(true)
     }

@@ -36,7 +36,9 @@ public enum RevealTiming {
     public static let characterDamping: Double = 0.80
     /// How long after a character starts moving before it reads as landed.
     public static let characterLand: Double = 0.15
-    public static let lineDissolveStart: Double = 0.95
+    /// The line gives way as the first character lands, so it never reads as
+    /// a strike-through under the arriving code.
+    public static let lineDissolveStart: Double = bloomStart + characterLand
     public static let lineDissolve: Double = 0.25
 
     // MARK: Act 4 — the wash
