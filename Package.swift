@@ -2,19 +2,19 @@
 import PackageDescription
 
 let package = Package(
-    name: "PlacodeCore",
+    name: "PostcodeNowCore",
     platforms: [
         .iOS(.v17),
         .macOS(.v13),
     ],
     products: [
-        .library(name: "PlacodeCore", targets: ["PlacodeCore"]),
+        .library(name: "PostcodeNowCore", targets: ["PostcodeNowCore"]),
     ],
     targets: [
-        .target(name: "PlacodeCore"),
+        .target(name: "PostcodeNowCore"),
         .testTarget(
-            name: "PlacodeCoreTests",
-            dependencies: ["PlacodeCore"]
+            name: "PostcodeNowCoreTests",
+            dependencies: ["PostcodeNowCore"]
         ),
     ]
 )
