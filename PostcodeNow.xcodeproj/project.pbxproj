@@ -1,8 +1,9 @@
 // !$*UTF8*$!
 {
 	archiveVersion = 1;
-	classes = {};
-	objectVersion = 56;
+	classes = {
+	};
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,10 +17,10 @@
 		B10000000000000000000008 /* SharePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000008 /* SharePresenter.swift */; };
 		B10000000000000000000009 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10000000000000000000009 /* RootView.swift */; };
 		B1000000000000000000000A /* PlaceExperience.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000A /* PlaceExperience.swift */; };
-		B1000000000000000000000E /* RevealCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000E /* RevealCanvas.swift */; };
-		B1000000000000000000000F /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000F /* Haptics.swift */; };
 		B1000000000000000000000B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000B /* Assets.xcassets */; };
 		B1000000000000000000000C /* PostcodeNowCore in Frameworks */ = {isa = PBXBuildFile; productRef = D10000000000000000000002 /* PostcodeNowCore */; };
+		B1000000000000000000000E /* RevealCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000E /* RevealCanvas.swift */; };
+		B1000000000000000000000F /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1000000000000000000000F /* Haptics.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,11 +34,11 @@
 		F10000000000000000000008 /* SharePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePresenter.swift; sourceTree = "<group>"; };
 		F10000000000000000000009 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		F1000000000000000000000A /* PlaceExperience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceExperience.swift; sourceTree = "<group>"; };
-		F1000000000000000000000E /* RevealCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealCanvas.swift; sourceTree = "<group>"; };
-		F1000000000000000000000F /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		F1000000000000000000000B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F1000000000000000000000C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F1000000000000000000000D /* PostcodeNow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PostcodeNow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1000000000000000000000E /* RevealCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevealCanvas.swift; sourceTree = "<group>"; };
+		F1000000000000000000000F /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +233,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PostcodeNow/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PostcodeNow;
 				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -259,6 +261,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = PostcodeNow/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PostcodeNow;
 				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
