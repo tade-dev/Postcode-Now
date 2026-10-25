@@ -26,6 +26,10 @@ public enum RevealTiming {
     public static let stretchStart: Double = 0.45
     public static let stretch: Double = 0.17
     public static let bloomStart: Double = 0.62
+    /// Widened from 0.045 on purpose: it keeps the reveal inside its 1.4-1.8s
+    /// band while short codes still settle before long ones, and spaces each
+    /// character's haptic far enough apart (~125ms) to be felt separately.
+    /// Do not round it back down.
     public static let characterStagger: Double = 0.125
     public static let beat: Double = 0.05
     public static let characterResponse: Double = 0.30
