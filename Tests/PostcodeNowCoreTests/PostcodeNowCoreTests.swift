@@ -346,5 +346,11 @@ final class InfoPlistContractTests: XCTestCase {
         XCTAssertEqual(plist["CFBundleDisplayName"] as? String, ProductCopy.wordmark)
         let orientations = try XCTUnwrap(plist["UISupportedInterfaceOrientations"] as? [String])
         XCTAssertEqual(orientations, ["UIInterfaceOrientationPortrait"])
+        let launch = try XCTUnwrap(plist["UILaunchScreen"] as? [String: Any])
+        XCTAssertEqual(
+            launch["UIColorName"] as? String,
+            "LaunchBackground",
+            "an empty UILaunchScreen flashes white before the first frame"
+        )
     }
 }
