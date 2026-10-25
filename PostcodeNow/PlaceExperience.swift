@@ -40,6 +40,8 @@ struct PlaceExperience: View {
     var onCopy: () -> Void
     var onRetry: () -> Void
 
+    @State private var copyPulse = false
+
     private func sample(at elapsed: Double?) -> RevealSample {
         RevealTimeline.sample(
             elapsed: elapsed,
@@ -66,6 +68,8 @@ struct PlaceExperience: View {
                 reduceMotion: reduceMotion,
                 haptics: haptics
             )
+            .scaleEffect(copyPulse ? 1.03 : 1)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: copyPulse)
             RevealClock(elapsed: elapsed) { now in
                 let frame = sample(at: now)
                 VStack(spacing: 0) {
@@ -97,6 +101,14 @@ struct PlaceExperience: View {
             RevealClock(elapsed: elapsed) { now in
                 let frame = sample(at: now)
                 controls(frame: frame, theme: theme(frame))
+            }
+        }
+        .onChange(of: toastToken) { _, newValue in
+            guard newValue > 0, !reduceMotion else { return }
+            copyPulse = true
+            Task {
+                try? await Task.sleep(nanoseconds: 140_000_000)
+                copyPulse = false
             }
         }
     }

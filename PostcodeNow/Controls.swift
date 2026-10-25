@@ -17,7 +17,9 @@ extension Color {
 struct PressFeedbackStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .opacity(configuration.isPressed ? 0.72 : 1)
+            .opacity(configuration.isPressed ? 0.82 : 1)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(.spring(response: 0.26, dampingFraction: 0.72), value: configuration.isPressed)
     }
 }
 
@@ -28,7 +30,10 @@ struct PrimaryButton: View {
     var action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            action()
+        } label: {
             Text(title)
                 .font(.system(.body, design: .rounded).weight(.semibold))
                 .foregroundStyle(label)
